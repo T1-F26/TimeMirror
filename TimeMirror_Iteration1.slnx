@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="TimeMirror.App/TimeMirror.App.csproj" />
+  <Project Path="TimeMirror.Core/TimeMirror.Core.csproj" />
+  <Project Path="TimeMirror.Infrastructure/TimeMirror.Infrastructure.csproj" />
+</Solution>

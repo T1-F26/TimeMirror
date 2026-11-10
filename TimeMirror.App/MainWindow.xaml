@@ -1,0 +1,11 @@
+﻿<Window x:Class="TimeMirror.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:TimeMirror.App.Views.Shell"
+        Title="TimeMirror"
+        Width="1000"
+        Height="650">
+
+    <shell:ShellViewUC/>
+
+</Window>
