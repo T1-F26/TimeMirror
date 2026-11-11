@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TimeMirror.Core.Models;
 
 namespace TimeMirror.Core.Interfaces.Services
 {
-    internal interface ITaskService
+    // Issue #47 - Vincent
+    // Contract for task business logic.
+    // ViewModels depend on this interface, not on TaskService directly.
+    public interface ITaskService
     {
+        // Validates a new task and saves it through the task repository.
+        // Returns the saved task (with its new TaskID).
+        TaskItem CreateTask(TaskItem task);
     }
 }
