@@ -25,13 +25,13 @@ namespace TimeMirror.Core.Services
                 throw new ArgumentNullException(nameof(task));
 
             if (string.IsNullOrWhiteSpace(task.Title))
-                throw new ArgumentException("Task title is required.", nameof(task));
+                throw new ArgumentException("Task title is required.");
 
             if (task.AgendaID <= 0)
-                throw new ArgumentException("Task must belong to an agenda.", nameof(task));
+                throw new ArgumentException("Task must belong to an agenda.");
 
             if (task.DueDate == default)
-                throw new ArgumentException("Task must have a due date.", nameof(task));
+                throw new ArgumentException("Task must have a due date.");
 
             task.Title = task.Title.Trim();
 
