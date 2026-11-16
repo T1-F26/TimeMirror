@@ -19,5 +19,6 @@ namespace TimeMirror.Core.Services
         {
             return _repository.GetByUserId(userId);
         }
+        
     }
 }
