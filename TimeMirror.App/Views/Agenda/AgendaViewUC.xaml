@@ -18,6 +18,14 @@
             <ComboBoxItem Content="Year"/>
         </ComboBox>
 
+        <TextBox Width="300"
+                 Height="35"
+                 HorizontalAlignment="Left"
+                 Margin="0,0,0,15"
+                 Padding="8"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="Search tasks by title"/>
+
         <ListBox ItemsSource="{Binding VisibleTasks}">
             <ListBox.ItemTemplate>
                 <DataTemplate>

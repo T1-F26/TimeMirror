@@ -9,6 +9,6 @@ namespace TimeMirror.Core.Interfaces.Services
     {
         // Validates a new task and saves it through the task repository.
         // Returns the saved task (with its new TaskID).
-        TaskItem CreateTask(TaskItem task);
+        TaskItem CreateTask(TaskItem task, int agendaId, int userId);
     }
 }
