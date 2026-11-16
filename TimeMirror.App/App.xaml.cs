@@ -7,6 +7,7 @@ using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Services;
 using TimeMirror.Infrastructure.Repositories;
+using TimeMirror.Infrastructure.Data;
 
 namespace TimeMirror.App;
 
@@ -19,8 +20,11 @@ public partial class App : Application
         base.OnStartup(e);
 
         var services = new ServiceCollection();
+        services.AddSingleton<LocalDb, LocalDb>();
 
         services.AddSingleton<IAgendaRepository, AgendaRepository>();
+        services.AddSingleton<ITaskRepository, TaskRepository>();
+        services.AddSingleton<UserSession>();
         services.AddSingleton<IAgendaService, AgendaService>();
 
         services.AddSingleton<INavigationService, NavigationService>();

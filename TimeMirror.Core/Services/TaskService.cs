@@ -1,12 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TimeMirror.Core.Interfaces.Repositories;
+using TimeMirror.Core.Interfaces.Services;
+using TimeMirror.Core.Models;
 
 namespace TimeMirror.Core.Services
 {
-    internal class TaskService
+    // Issue #47 - Vincent
+    // Business logic for tasks: checks the data is valid,
+    // then hands it to the repository to be saved.
+    public class TaskService : ITaskService
     {
+        private readonly ITaskRepository _repository;
+
+        // The repository comes in through dependency injection,
+        // so this class never creates one itself.
+        public TaskService(ITaskRepository repository)
+        {
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        }
+
+        public TaskItem CreateTask(TaskItem task, int agendaId, int userId)
+        {
+            if (task == null)
+                throw new ArgumentNullException(nameof(task));
+
+            if (string.IsNullOrWhiteSpace(task.Title))
+                throw new ArgumentException("Task title is required.");
+
+            if (task.AgendaID <= 0)
+                throw new ArgumentException("Task must belong to an agenda.");
+
+            if (task.DueDate == default)
+                throw new ArgumentException("Task must have a due date.");
+            if (agendaId <= 0)
+                throw new ArgumentException("Agenda ID is required.");
+            if (string.IsNullOrWhiteSpace(task.Description))
+                throw new ArgumentException("Task description is required.");
+            if (userId <= 0)
+                throw new ArgumentException("User ID is required.");
+
+            task.Title = task.Title.Trim();
+
+            return _repository.AddTask(agendaId, task, userId);
+        }
     }
 }

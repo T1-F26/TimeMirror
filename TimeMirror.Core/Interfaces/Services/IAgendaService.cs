@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeMirror.Core.Models;
+using TimeMirror.Core.Enums;
 
 namespace TimeMirror.Core.Interfaces
 {
