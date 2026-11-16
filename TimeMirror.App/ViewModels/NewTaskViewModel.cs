@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using TimeMirror.App.Commands;
+using TimeMirror.App.Services;
 using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Models;
 
@@ -13,7 +14,7 @@ namespace TimeMirror.App.ViewModels;
 public class NewTaskViewModel : ViewModelBase
 {
     // Simulated logged-in user's agenda until authentication exists.
-    private const int CurrentAgendaId = 1;
+    private readonly int _userId;
 
     private readonly ITaskService _taskService;
 
@@ -56,11 +57,14 @@ public class NewTaskViewModel : ViewModelBase
 
     public ICommand SaveCommand { get; }
     public ICommand ClearCommand { get; }
+    private readonly int _currentAgendaId;
 
-    // TaskService comes in through dependency injection.
-    public NewTaskViewModel(ITaskService taskService)
+    // UserSession comes in through dependency injection.
+    public NewTaskViewModel(ITaskService taskService, UserSession userSession, int currentAgendaId)
     {
         _taskService = taskService;
+        _userId = userSession.CurrentUserId;
+        _currentAgendaId = currentAgendaId;
 
         SaveCommand = new RelayCommand(Save);
         ClearCommand = new RelayCommand(Clear);
@@ -75,13 +79,13 @@ public class NewTaskViewModel : ViewModelBase
         {
             var task = new TaskItem
             {
-                AgendaID = CurrentAgendaId,
+                AgendaID = _currentAgendaId,
                 Title = Title,
                 Description = Description,
                 DueDate = DueDate ?? default
             };
 
-            var saved = _taskService.CreateTask(task);
+            var saved = _taskService.CreateTask(task, _currentAgendaId, _userId);
 
             ResetFields();
             SuccessMessage = $"Task \"{saved.Title}\" was added.";

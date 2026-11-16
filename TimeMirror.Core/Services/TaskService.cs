@@ -19,7 +19,7 @@ namespace TimeMirror.Core.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public TaskItem CreateTask(TaskItem task)
+        public TaskItem CreateTask(TaskItem task, int agendaId, int userId)
         {
             if (task == null)
                 throw new ArgumentNullException(nameof(task));
@@ -32,10 +32,16 @@ namespace TimeMirror.Core.Services
 
             if (task.DueDate == default)
                 throw new ArgumentException("Task must have a due date.");
+            if (agendaId <= 0)
+                throw new ArgumentException("Agenda ID is required.");
+            if (string.IsNullOrWhiteSpace(task.Description))
+                throw new ArgumentException("Task description is required.");
+            if (userId <= 0)
+                throw new ArgumentException("User ID is required.");
 
             task.Title = task.Title.Trim();
 
-            return _repository.Add(task);
+            return _repository.AddTask(agendaId, task, userId);
         }
     }
 }

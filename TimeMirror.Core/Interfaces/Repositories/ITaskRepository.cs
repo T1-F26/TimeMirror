@@ -8,6 +8,12 @@ namespace TimeMirror.Core.Interfaces.Repositories
     public interface ITaskRepository
     {
         // Saves a new task and returns it with its TaskID set.
-        TaskItem Add(TaskItem task);
+        List<TaskItem> GetTasksByUserId(int userId);
+
+        TaskItem AddTask(int agendaId, TaskItem task, int userId);
+        //void UpdateTask(int userId, TaskItem task);
+        //void DeleteTask(int userId, int taskId);
+        //TaskItem GetTaskById(int userId, int taskId);
+
     }
 }
