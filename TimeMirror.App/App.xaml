@@ -1,0 +1,12 @@
+﻿<Application x:Class="TimeMirror.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:TimeMirror.App.ViewModels"
+             xmlns:agenda="clr-namespace:TimeMirror.App.Views.Agenda">
+
+    <Application.Resources>
+        <DataTemplate DataType="{x:Type vm:AgendaViewModel}">
+            <agenda:AgendaViewUC/>
+        </DataTemplate>
+    </Application.Resources>
+</Application>

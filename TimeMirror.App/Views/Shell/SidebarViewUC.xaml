@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="TimeMirror.App.Views.Shell.SidebarViewUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <StackPanel Background="#202938">
+        <TextBlock Text="TimeMirror"
+                   Foreground="White"
+                   FontSize="22"
+                   Margin="20"/>
+
+        <Button Content="Agenda"
+                Command="{Binding NavigateAgendaCommand}"
+                Margin="10"/>
+    </StackPanel>
+</UserControl>
