@@ -1,9 +1,10 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using TimeMirror.Core.Interfaces;
 using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Models;
+using TimeMirror.Core.Enums;
 
 namespace TimeMirror.Core.Services
 {
@@ -37,7 +38,16 @@ namespace TimeMirror.Core.Services
             return _repository.GetByUserId(userId);
         }
 
-        // Agenda filtering and search are being handled separately
-        // This service currently handles retrieving the agenda only.
+        // This method retrieves upcoming tasks for a user, given
+        // a specific date and view mode for the agenda.
+        public IEnumerable<Task> GetUpcomingTasks(
+            int userId,
+            DateTime date,
+            AgendaViewMode mode)
+        {
+            // The implementation requires the Agenda task collection
+            // and the filtering rules for AgendaViewMode.
+            throw new NotImplementedException();
+        }
     }
 }
