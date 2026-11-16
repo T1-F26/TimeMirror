@@ -1,12 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TimeMirror.Core.Interfaces.Repositories;
+using TimeMirror.Core.Interfaces.Services;
+using TimeMirror.Core.Models;
 
 namespace TimeMirror.Core.Services
 {
-    internal class TaskService
+    public class TaskService : ITaskService
     {
+        private readonly ITaskRepository _repository;
+
+        public TaskService(ITaskRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public TaskItem? GetTaskById(int taskId)
+        {
+            if (taskId <= 0)
+            {
+                return null;
+            }
+
+            return _repository.FindById(taskId);
+        }
     }
 }

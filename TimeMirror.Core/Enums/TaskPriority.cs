@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace TimeMirror.Core.Enums;
 
-namespace TimeMirror.Core.Enums
+public enum TaskPriority
 {
-    internal class TaskPriority
-    {
-    }
+    Urgent,
+    High,
+    Medium,
+    Low
 }

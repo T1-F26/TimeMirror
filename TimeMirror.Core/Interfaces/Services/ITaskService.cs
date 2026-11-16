@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TimeMirror.Core.Models;
 
 namespace TimeMirror.Core.Interfaces.Services
 {
-    internal interface ITaskService
+    public interface ITaskService
     {
+        TaskItem? GetTaskById(int taskId);
     }
 }
