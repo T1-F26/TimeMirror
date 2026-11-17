@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
@@ -16,16 +15,19 @@ public class AgendaViewModel : ViewModelBase
     private readonly Agenda? _agenda;
     private readonly UserSession _userSession;
     private readonly IAgendaService _agendaService;
+    private readonly INavigationService _navigation;
 
     private string _selectedView = "Week";
     private string _searchText = "";
 
     public AgendaViewModel(
         IAgendaService agendaService,
-        UserSession userSession)
+        UserSession userSession,
+        INavigationService navigation)
     {
         _agendaService = agendaService;
         _userSession = userSession;
+        _navigation = navigation;
 
         // Retrieve the currently logged-in user
         int userId = _userSession.CurrentUserId;
@@ -36,6 +38,9 @@ public class AgendaViewModel : ViewModelBase
         // Initialize commands
         ChangeViewCommand = new RelayCommand(
             () => SelectedView = "Day");
+
+        NavigateNewTaskCommand = new RelayCommand(
+            () => _navigation.NavigateTo<NewTaskViewModel>());
     }
 
     public string SelectedView
@@ -102,4 +107,6 @@ public class AgendaViewModel : ViewModelBase
     }
 
     public ICommand ChangeViewCommand { get; }
+
+    public ICommand NavigateNewTaskCommand { get; }
 }
