@@ -49,13 +49,33 @@ namespace TimeMirror.Infrastructure.Repositories
             return await GetSqlContext().Tasks.ToListAsync();
         }
 
-        // Add a task to SQL
-        public async Task AddAsync(TaskItem task)
+
+        // Add a task with a unique ID
+        public TaskItem AddTask(int agendaId, TaskItem task, int userId)
         {
-            var context = GetSqlContext();
-            await context.Tasks.AddAsync(task);
-            await context.SaveChangesAsync();
+            var db = GetLocalDb();
+
+            if (!db.Users.TryGetValue(userId, out var user))
+                throw new KeyNotFoundException("User not found.");
+
+            if (user.Agenda == null)
+                throw new InvalidOperationException("User has no agenda.");
+
+            // Find the highest existing task ID
+            int nextId = db.Users.Values
+                .Where(u => u.Agenda != null)
+                .SelectMany(u => u.Agenda!.Tasks)
+                .Select(t => t.TaskID)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            task.TaskID = nextId;
+
+            user.Agenda.Tasks.Add(task);
+
+            return task;
         }
+
 
         // Update a task in SQL
         public async Task UpdateAsync(TaskItem task)
