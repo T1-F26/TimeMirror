@@ -57,6 +57,8 @@ public class NewTaskViewModel : ViewModelBase
 
     public ICommand SaveCommand { get; }
     public ICommand ClearCommand { get; }
+    // The New Task form is always editable (see TaskCardUC, #53).
+    public bool IsViewMode => false;
     private readonly int _currentAgendaId;
 
     // UserSession comes in through dependency injection.
