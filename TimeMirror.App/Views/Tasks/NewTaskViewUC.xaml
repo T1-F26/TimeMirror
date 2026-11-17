@@ -16,7 +16,7 @@
                  Padding="4"
                  Margin="0,4,0,12"/>
 
-        <TextBlock Text="Description"/>
+        <TextBlock Text="Description *"/>
         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                  AcceptsReturn="True"
                  TextWrapping="Wrap"
