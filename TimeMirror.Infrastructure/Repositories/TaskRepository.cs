@@ -1,37 +1,124 @@
-﻿using System;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Models;
 using TimeMirror.Infrastructure.Data;
 
 namespace TimeMirror.Infrastructure.Repositories
 {
-    public class TaskRepository: ITaskRepository
+    // Handles task data in the database
+    public class TaskRepository : ITaskRepository
     {
-        private readonly LocalDb _db;
+        private readonly TimeMirrorDbContext? _context;
+        private readonly LocalDb? _db;
+
+        // Initialize SQL database context
+        public TaskRepository(TimeMirrorDbContext context)
+        {
+            _context = context;
+        }
+
+        // Initialize local database
         public TaskRepository(LocalDb db)
         {
             _db = db;
         }
-        //CRUD operations
 
-        //Get all tasks for a specific user
+        // Get task by ID from SQL
+        public async Task<TaskItem?> GetByIdAsync(int taskId)
+        {
+            return await GetSqlContext().Tasks
+                .FirstOrDefaultAsync(t => t.TaskID == taskId);
+        }
+
+        // Get tasks belonging to an agenda from SQL
+        public async Task<List<TaskItem>> GetByAgendaIdAsync(int agendaId)
+        {
+            return await GetSqlContext().Tasks
+                .Where(t => t.AgendaID == agendaId)
+                .ToListAsync();
+        }
+
+        // Get all tasks from SQL
+        public async Task<List<TaskItem>> GetAllAsync()
+        {
+            return await GetSqlContext().Tasks.ToListAsync();
+        }
+
+
+        // Add a task with a unique ID
+        public TaskItem AddTask(int agendaId, TaskItem task, int userId)
+        {
+            var db = GetLocalDb();
+
+            if (!db.Users.TryGetValue(userId, out var user))
+                throw new KeyNotFoundException("User not found.");
+
+            if (user.Agenda == null)
+                throw new InvalidOperationException("User has no agenda.");
+
+            // Find the highest existing task ID
+            int nextId = db.Users.Values
+                .Where(u => u.Agenda != null)
+                .SelectMany(u => u.Agenda!.Tasks)
+                .Select(t => t.TaskID)
+                .DefaultIfEmpty(0)
+                .Max() + 1;
+
+            task.TaskID = nextId;
+
+            user.Agenda.Tasks.Add(task);
+
+            return task;
+        }
+
+
+        // Update a task in SQL
+        public async Task UpdateAsync(TaskItem task)
+        {
+            var context = GetSqlContext();
+            context.Tasks.Update(task);
+            await context.SaveChangesAsync();
+        }
+
+        // Delete a task from SQL
+        public async Task DeleteAsync(int taskId)
+        {
+            var context = GetSqlContext();
+            var task = await context.Tasks
+                .FirstOrDefaultAsync(t => t.TaskID == taskId);
+
+            if (task != null)
+            {
+                context.Tasks.Remove(task);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        // Get tasks belonging to a user from LocalDb
         public List<TaskItem> GetTasksByUserId(int userId)
         {
-            if (_db.Users.TryGetValue(userId, out var user) && user.Agenda != null)
+            var db = GetLocalDb();
+
+            if (db.Users.TryGetValue(userId, out var user)
+                && user.Agenda != null)
             {
                 return user.Agenda.Tasks;
             }
+
             return new List<TaskItem>();
         }
 
-        //Create a task
+        // Add a task to a user's agenda in LocalDb
         public TaskItem AddTask(int agendaId, TaskItem task, int userId)
         {
-            if (!_db.Users.TryGetValue(userId, out var user))
+            var db = GetLocalDb();
+
+            if (!db.Users.TryGetValue(userId, out var user))
                 throw new KeyNotFoundException("User not found.");
 
             if (user.Agenda == null)
@@ -41,14 +128,18 @@ namespace TimeMirror.Infrastructure.Repositories
             return task;
         }
 
-        // Read a task by its ID
+        // Get the SQL context when available
+        private TimeMirrorDbContext GetSqlContext()
+        {
+            return _context ?? throw new InvalidOperationException(
+                "TaskRepository was not initialized with TimeMirrorDbContext.");
+        }
 
-
-        // Update a task
-
-
-        // Delete a task
+        // Get the local database when available
+        private LocalDb GetLocalDb()
+        {
+            return _db ?? throw new InvalidOperationException(
+                "TaskRepository was not initialized with LocalDb.");
+        }
     }
 }
-
-
