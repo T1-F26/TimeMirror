@@ -57,21 +57,37 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Page heading -->
-            <StackPanel Grid.Row="0"
-                        Margin="0,0,0,20">
+            <!-- Page heading and New Task button -->
+            <Grid Grid.Row="0"
+                  Margin="0,0,0,20">
 
-                <TextBlock Text="Agenda"
-                           FontSize="26"
-                           FontWeight="SemiBold"
-                           Foreground="White"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-                <TextBlock Text="View your upcoming activities and commitments."
-                           Foreground="#B0BECC"
-                           TextWrapping="Wrap"
-                           Margin="0,5,0,0"/>
+                <StackPanel Grid.Column="0"
+                            Margin="0,0,10,0">
 
-            </StackPanel>
+                    <TextBlock Text="Agenda"
+                               FontSize="26"
+                               FontWeight="SemiBold"
+                               Foreground="White"/>
+
+                    <TextBlock Text="View your upcoming activities and commitments."
+                               Foreground="#B0BECC"
+                               TextWrapping="Wrap"
+                               Margin="0,5,0,0"/>
+
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="+ New Task"
+                        Command="{Binding NavigateNewTaskCommand}"
+                        Style="{StaticResource NavigationButton}"
+                        VerticalAlignment="Top"/>
+
+            </Grid>
 
             <!-- Day, Week, Month and Year selectors -->
             <ListBox Grid.Row="1"
@@ -146,8 +162,8 @@
                 <WrapPanel HorizontalAlignment="Center">
 
                     <Button Content="Previous"
-                         Command="{Binding PreviousCommand}"
-                         Style="{StaticResource NavigationButton}"/>
+                            Command="{Binding PreviousCommand}"
+                            Style="{StaticResource NavigationButton}"/>
 
                     <TextBlock Text="{Binding SelectedDate,
                                       StringFormat='{}{0:ddd, MMM dd, yyyy}',
