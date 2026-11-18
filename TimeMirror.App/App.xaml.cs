@@ -1,12 +1,17 @@
-﻿using System;
+﻿
+using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+
 using TimeMirror.App.Services;
 using TimeMirror.App.ViewModels;
+
 using TimeMirror.Core.Interfaces;
 using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Services;
+
 using TimeMirror.Infrastructure.Repositories;
 using TimeMirror.Infrastructure.Data;
 
@@ -20,24 +25,37 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Read SQL Server connection string from environment
+        string connectionString =
+            Environment.GetEnvironmentVariable(
+                "TIMEMIRROR_CONNECTION_STRING")
+            ?? throw new InvalidOperationException(
+                "TIMEMIRROR_CONNECTION_STRING is not configured.");
+
         var services = new ServiceCollection();
 
-        services.AddSingleton<LocalDb, LocalDb>();
+        // SQL Server / EF Core
+        services.AddDbContextFactory<TimeMirrorDbContext>(
+            options => options.UseSqlServer(connectionString));
 
+        // Repositories
         services.AddSingleton<IAgendaRepository, AgendaRepository>();
         services.AddSingleton<ITaskRepository, TaskRepository>();
 
+        // Current user
         services.AddSingleton<UserSession>();
 
+        // Business services
         services.AddSingleton<IAgendaService, AgendaService>();
         services.AddSingleton<ITaskService, TaskService>();
 
+        // Navigation
         services.AddSingleton<INavigationService, NavigationService>();
 
+        // ViewModels
         services.AddSingleton<ShellViewModel>();
         services.AddTransient<AgendaViewModel>();
 
-        // Create the New Task ViewModel using the current user's agenda.
         services.AddTransient<NewTaskViewModel>(provider =>
         {
             var taskService =
@@ -53,10 +71,8 @@ public partial class App : Application
                 agendaService.GetAgenda(userSession.CurrentUserId);
 
             if (agenda == null)
-            {
                 throw new InvalidOperationException(
                     "No agenda was found for the current user.");
-            }
 
             return new NewTaskViewModel(
                 taskService,
@@ -64,11 +80,14 @@ public partial class App : Application
                 agenda.AgendaID);
         });
 
+        // Main window
         services.AddSingleton<MainWindow>();
 
         _provider = services.BuildServiceProvider();
 
-        var window = _provider.GetRequiredService<MainWindow>();
+        var window =
+            _provider.GetRequiredService<MainWindow>();
+
         var navigation =
             _provider.GetRequiredService<INavigationService>();
 
