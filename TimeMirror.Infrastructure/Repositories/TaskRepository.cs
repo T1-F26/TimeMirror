@@ -8,138 +8,117 @@ using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Models;
 using TimeMirror.Infrastructure.Data;
 
-namespace TimeMirror.Infrastructure.Repositories
+namespace TimeMirror.Infrastructure.Repositories;
+
+public class TaskRepository : ITaskRepository
 {
-    // Handles task data in the database
-    public class TaskRepository : ITaskRepository
+    private readonly IDbContextFactory<TimeMirrorDbContext> _factory;
+
+    public TaskRepository(
+        IDbContextFactory<TimeMirrorDbContext> factory)
     {
-        private readonly TimeMirrorDbContext? _context;
-        private readonly LocalDb? _db;
+        _factory = factory;
+    }
 
-        // Initialize SQL database context
-        public TaskRepository(TimeMirrorDbContext context)
-        {
-            _context = context;
-        }
+    // READ: Get task by ID
+    public async Task<TaskItem?> GetByIdAsync(int taskId)
+    {
+        await using var context =
+            await _factory.CreateDbContextAsync();
 
-        // Initialize local database
-        public TaskRepository(LocalDb db)
-        {
-            _db = db;
-        }
+        return await context.Tasks
+            .AsNoTracking()
+            .FirstOrDefaultAsync(t => t.TaskID == taskId);
+    }
 
-        // Get task by ID from SQL
-        public async Task<TaskItem?> GetByIdAsync(int taskId)
-        {
-            return await GetSqlContext().Tasks
-                .FirstOrDefaultAsync(t => t.TaskID == taskId);
-        }
+    // READ: Get all tasks belonging to an agenda
+    public async Task<List<TaskItem>> GetByAgendaIdAsync(int agendaId)
+    {
+        await using var context =
+            await _factory.CreateDbContextAsync();
 
-        // Get tasks belonging to an agenda from SQL
-        public async Task<List<TaskItem>> GetByAgendaIdAsync(int agendaId)
-        {
-            return await GetSqlContext().Tasks
-                .Where(t => t.AgendaID == agendaId)
-                .ToListAsync();
-        }
+        return await context.Tasks
+            .AsNoTracking()
+            .Where(t => t.AgendaID == agendaId)
+            .OrderBy(t => t.DueDate)
+            .ToListAsync();
+    }
 
-        // Get all tasks from SQL
-        public async Task<List<TaskItem>> GetAllAsync()
-        {
-            return await GetSqlContext().Tasks.ToListAsync();
-        }
+    // READ: Get every task
+    public async Task<List<TaskItem>> GetAllAsync()
+    {
+        await using var context =
+            await _factory.CreateDbContextAsync();
 
+        return await context.Tasks
+            .AsNoTracking()
+            .OrderBy(t => t.DueDate)
+            .ToListAsync();
+    }
 
-        // Add a task with a unique ID
-        public TaskItem AddTask(int agendaId, TaskItem task, int userId)
-        {
-            var db = GetLocalDb();
+    // CREATE: Add a task to a user's agenda
+    public TaskItem AddTask(
+        int agendaId,
+        TaskItem task,
+        int userId)
+    {
+        using var context = _factory.CreateDbContext();
 
-            if (!db.Users.TryGetValue(userId, out var user))
-                throw new KeyNotFoundException("User not found.");
+        bool agendaExists = context.Agendas.Any(a =>
+            a.AgendaID == agendaId &&
+            a.UserID == userId);
 
-            if (user.Agenda == null)
-                throw new InvalidOperationException("User has no agenda.");
+        if (!agendaExists)
+            throw new InvalidOperationException(
+                "Agenda not found or does not belong to this user.");
 
-            // Find the highest existing task ID
-            int nextId = db.Users.Values
-                .Where(u => u.Agenda != null)
-                .SelectMany(u => u.Agenda!.Tasks)
-                .Select(t => t.TaskID)
-                .DefaultIfEmpty(0)
-                .Max() + 1;
+        task.AgendaID = agendaId;
 
-            task.TaskID = nextId;
+        context.Tasks.Add(task);
+        context.SaveChanges();
 
-            user.Agenda.Tasks.Add(task);
+        return task;
+    }
 
-            return task;
-        }
+    // UPDATE: Modify an existing task
+    public async Task UpdateAsync(TaskItem task)
+    {
+        await using var context =
+            await _factory.CreateDbContextAsync();
 
+        context.Tasks.Update(task);
 
-        // Update a task in SQL
-        public async Task UpdateAsync(TaskItem task)
-        {
-            var context = GetSqlContext();
-            context.Tasks.Update(task);
-            await context.SaveChangesAsync();
-        }
+        await context.SaveChangesAsync();
+    }
 
-        // Delete a task from SQL
-        public async Task DeleteAsync(int taskId)
-        {
-            var context = GetSqlContext();
-            var task = await context.Tasks
-                .FirstOrDefaultAsync(t => t.TaskID == taskId);
+    // DELETE: Remove a task by ID
+    public async Task DeleteAsync(int taskId)
+    {
+        await using var context =
+            await _factory.CreateDbContextAsync();
 
-            if (task != null)
-            {
-                context.Tasks.Remove(task);
-                await context.SaveChangesAsync();
-            }
-        }
+        var task = await context.Tasks
+            .FirstOrDefaultAsync(t => t.TaskID == taskId);
 
-        // Get tasks belonging to a user from LocalDb
-        public List<TaskItem> GetTasksByUserId(int userId)
-        {
-            var db = GetLocalDb();
+        if (task == null)
+            return;
 
-            if (db.Users.TryGetValue(userId, out var user)
-                && user.Agenda != null)
-            {
-                return user.Agenda.Tasks;
-            }
+        context.Tasks.Remove(task);
 
-            return new List<TaskItem>();
-        }
+        await context.SaveChangesAsync();
+    }
 
-        // Add a task to a user's agenda in LocalDb
-        public TaskItem AddTask(int agendaId, TaskItem task, int userId)
-        {
-            var db = GetLocalDb();
+    // READ: Get all tasks belonging to a user
+    public List<TaskItem> GetTasksByUserId(int userId)
+    {
+        using var context = _factory.CreateDbContext();
 
-            if (!db.Users.TryGetValue(userId, out var user))
-                throw new KeyNotFoundException("User not found.");
-
-            if (user.Agenda == null)
-                throw new InvalidOperationException("User has no agenda.");
-
-            user.Agenda.Tasks.Add(task);
-            return task;
-        }
-
-        // Get the SQL context when available
-        private TimeMirrorDbContext GetSqlContext()
-        {
-            return _context ?? throw new InvalidOperationException(
-                "TaskRepository was not initialized with TimeMirrorDbContext.");
-        }
-
-        // Get the local database when available
-        private LocalDb GetLocalDb()
-        {
-            return _db ?? throw new InvalidOperationException(
-                "TaskRepository was not initialized with LocalDb.");
-        }
+        return context.Tasks
+            .AsNoTracking()
+            .Where(t => context.Agendas.Any(a =>
+                a.AgendaID == t.AgendaID &&
+                a.UserID == userId))
+            .OrderBy(t => t.DueDate)
+            .ToList();
     }
 }

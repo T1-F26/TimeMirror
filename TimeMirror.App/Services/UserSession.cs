@@ -2,5 +2,5 @@
 
 public class UserSession
 {
-    public int CurrentUserId { get; set; } = 1;
+    public int CurrentUserId { get; set; }
 }

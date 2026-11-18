@@ -1,25 +1,26 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using TimeMirror.Core.Interfaces.Repositories;
 using TimeMirror.Core.Models;
 using TimeMirror.Infrastructure.Data;
 
+namespace TimeMirror.Infrastructure.Repositories;
 
-namespace TimeMirror.Infrastructure.Repositories
+public class AgendaRepository : IAgendaRepository
 {
+    private readonly IDbContextFactory<TimeMirrorDbContext> _contextFactory;
 
-    public class AgendaRepository : IAgendaRepository
+    public AgendaRepository(IDbContextFactory<TimeMirrorDbContext> contextFactory)
     {
-        private readonly LocalDb _db;
+        _contextFactory = contextFactory;
+    }
 
-        public AgendaRepository(LocalDb db)
-        {
-            _db = db;
-        }
-        public Agenda? GetByUserId(int userId)
-        {
-            return _db.Users.TryGetValue(userId, out var user)
-                ? user.Agenda
-                : null;
-        }
+    public Agenda? GetByUserId(int userId)
+    {
+        using var context = _contextFactory.CreateDbContext();
+        return context.Agendas
+            .Include(a => a.Tasks)
+            .FirstOrDefault(a => a.UserID == userId);
     }
 }
