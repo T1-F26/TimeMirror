@@ -85,6 +85,27 @@ public partial class App : Application
 
         _provider = services.BuildServiceProvider();
 
+
+        // UserSession - This is probably temporary as we dont have a login system yet. For now, we will just set the current user to 1.
+        using (var context = _provider
+    .GetRequiredService<
+        IDbContextFactory<TimeMirrorDbContext>>()
+    .CreateDbContext())
+        {
+            var user = context.Users
+                .SingleOrDefault(u =>
+                    u.Email == "test@timemirror.local");
+
+            if (user == null)
+                throw new InvalidOperationException(
+                    "Test user not found. Run SeedTestData.sql.");
+
+            var session = _provider
+                .GetRequiredService<UserSession>();
+
+            session.CurrentUserId = user.UserID;
+        }
+
         var window =
             _provider.GetRequiredService<MainWindow>();
 

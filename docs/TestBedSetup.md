@@ -100,6 +100,8 @@ Set `TimeMirror.App` as the startup project and press F5.
 
 The agenda should load the sample tasks from SQL Server.
 
+During development, TimeMirror automatically looks up test@timemirror.local in SQL Server and initializes UserSession using that user's actual ID. Run SeedTestData.sql before launching the application. This is a development-only session, not a production authentication system.
+
 ## 9. Verify persistence
 
 Create a task using TimeMirror, close the application, then reopen it.
