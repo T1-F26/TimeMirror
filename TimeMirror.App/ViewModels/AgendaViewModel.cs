@@ -109,4 +109,29 @@ public class AgendaViewModel : ViewModelBase
     public ICommand ChangeViewCommand { get; }
 
     public ICommand NavigateNewTaskCommand { get; }
+
+    // View Task (#68) - Vincent
+    // When a task is clicked in the Agenda list, open it in the Task Details page.
+    private TaskItem? _selectedTask;
+
+    public TaskItem? SelectedTask
+    {
+        get => _selectedTask;
+        set
+        {
+            _selectedTask = value;
+            OnPropertyChanged();
+
+            if (value != null)
+                OpenTask(value.TaskID);
+        }
+    }
+
+    private void OpenTask(int taskId)
+    {
+        _navigation.NavigateTo<TaskViewModel>();
+
+        if (_navigation.CurrentViewModel is TaskViewModel taskViewModel)
+            _ = taskViewModel.LoadTaskByIdAsync(taskId);
+    }
 }

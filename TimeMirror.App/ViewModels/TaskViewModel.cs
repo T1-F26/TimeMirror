@@ -1,20 +1,38 @@
 ﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using TimeMirror.App.Commands;
+using TimeMirror.App.Services;
+using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Models;
 
 namespace TimeMirror.App.ViewModels;
 
-// View Task - Maryam
+// View Task - Maryam (#54), Vincent (#55)
 // Backs the reusable TaskCardUC (#53) in 'ViewMode': the card's fields are
 // read-only and are filled with the task's persisted data.
-// The task itself is handed in through LoadTask(...) once it has been
-// retrieved (retrieval via the task service is a separate task).
+// #55: the task is retrieved by ID through ITaskService (LoadTaskByIdAsync).
 public class TaskViewModel : ViewModelBase
 {
+    private readonly ITaskService _taskService;
+    private readonly INavigationService _navigation;
+
     private int _taskId;
     private string _title = "";
     private string _description = "";
     private DateTime? _dueDate;
     private bool _isViewMode = true;
+    private string _errorMessage = "";
+
+    // Services come in through dependency injection.
+    public TaskViewModel(ITaskService taskService, INavigationService navigation)
+    {
+        _taskService = taskService;
+        _navigation = navigation;
+
+        BackCommand = new RelayCommand(
+            () => _navigation.NavigateTo<AgendaViewModel>());
+    }
 
     public int TaskId
     {
@@ -50,6 +68,41 @@ public class TaskViewModel : ViewModelBase
         set { _isViewMode = value; OnPropertyChanged(); }
     }
 
+    // Shown on the page if the task can't be loaded.
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set { _errorMessage = value; OnPropertyChanged(); }
+    }
+
+    // Returns to the Agenda.
+    public ICommand BackCommand { get; }
+
+    // Issue #55 - Vincent
+    // Retrieves the persisted task through the task service,
+    // then fills the card with it.
+    public async Task LoadTaskByIdAsync(int taskId)
+    {
+        ErrorMessage = "";
+
+        try
+        {
+            var task = await _taskService.GetTaskByIdAsync(taskId);
+
+            if (task == null)
+            {
+                ErrorMessage = "This task could not be found.";
+                return;
+            }
+
+            LoadTask(task);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Could not load the task: {ex.Message}";
+        }
+    }
+
     // Fills the card's empty fields with the persisted task and
     // puts the card into ViewMode.
     public void LoadTask(TaskItem task)
@@ -64,4 +117,3 @@ public class TaskViewModel : ViewModelBase
         IsViewMode = true;
     }
 }
-

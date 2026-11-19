@@ -15,6 +15,10 @@
             <tasks:NewTaskViewUC/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:TaskViewModel}">
+            <tasks:TaskDetailsViewUC/>
+        </DataTemplate>
+
     </Application.Resources>
 
 </Application>

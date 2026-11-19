@@ -194,6 +194,7 @@
 
                 <ListBox x:Name="AgendaTaskList"
                          ItemsSource="{Binding VisibleTasks}"
+                         SelectedItem="{Binding SelectedTask}"
                          Background="Transparent"
                          BorderThickness="0"
                          HorizontalContentAlignment="Stretch"
