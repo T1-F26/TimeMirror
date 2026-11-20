@@ -1,14 +1,26 @@
-﻿using TimeMirror.Core.Models;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using TimeMirror.Core.Models;
 
 namespace TimeMirror.Core.Interfaces.Services
 {
-    // Issue #47 - Vincent
-    // Contract for task business logic.
-    // ViewModels depend on this interface, not on TaskService directly.
+    // Issue #47 - Create task
+    // Issue #57 - Retrieve task data
     public interface ITaskService
     {
-        // Validates a new task and saves it through the task repository.
-        // Returns the saved task (with its new TaskID).
+        // Creates and saves a new task.
         TaskItem CreateTask(TaskItem task, int agendaId, int userId);
+
+        // Retrieves a specific task by its ID.
+        Task<TaskItem?> GetTaskByIdAsync(int taskId);
+
+        // Retrieves all tasks belonging to an agenda.
+        Task<List<TaskItem>> GetTasksByAgendaIdAsync(int agendaId);
+
+        // Retrieves all tasks.
+        Task<List<TaskItem>> GetAllTasksAsync();
+
+        // Retrieves all tasks belonging to a user.
+        List<TaskItem> GetTasksByUserId(int userId);
     }
 }
