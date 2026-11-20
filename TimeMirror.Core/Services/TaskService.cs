@@ -47,6 +47,37 @@ namespace TimeMirror.Core.Services
             return _repository.AddTask(agendaId, task, userId);
         }
 
+        // Issue #39 - Vincent
+        // Validates an edited task, checks it still exists, then saves it.
+        public async Task UpdateTaskAsync(TaskItem task)
+        {
+            if (task == null)
+                throw new ArgumentNullException(nameof(task));
+
+            if (task.TaskID <= 0)
+                throw new ArgumentException("Task ID is required.");
+
+            if (string.IsNullOrWhiteSpace(task.Title))
+                throw new ArgumentException("Task title is required.");
+
+            if (string.IsNullOrWhiteSpace(task.Description))
+                throw new ArgumentException("Task description is required.");
+
+            if (task.DueDate == default)
+                throw new ArgumentException("Task must have a due date.");
+
+            var existing = await _repository.GetByIdAsync(task.TaskID);
+
+            if (existing == null)
+                throw new ArgumentException("This task no longer exists.");
+
+            // Keep the task in the same agenda it was created in.
+            task.AgendaID = existing.AgendaID;
+            task.Title = task.Title.Trim();
+
+            await _repository.UpdateAsync(task);
+        }
+
         // Issue #57
         // Retrieves a specific task from the repository.
         public async Task<TaskItem?> GetTaskByIdAsync(int taskId)
