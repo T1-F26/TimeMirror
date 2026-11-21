@@ -59,6 +59,13 @@ public class NewTaskViewModel : ViewModelBase
     public ICommand ClearCommand { get; }
     // The New Task form is always editable (see TaskCardUC, #53).
     public bool IsViewMode => false;
+    // Issue #17 - new tasks start as not completed (TaskCard checkbox).
+    private bool _isCompleted;
+    public bool IsCompleted
+    {
+        get => _isCompleted;
+        set { _isCompleted = value; OnPropertyChanged(); }
+    }
     private readonly int _currentAgendaId;
 
     // UserSession comes in through dependency injection.
@@ -84,7 +91,8 @@ public class NewTaskViewModel : ViewModelBase
                 AgendaID = _currentAgendaId,
                 Title = Title,
                 Description = Description,
-                DueDate = DueDate ?? default
+                DueDate = DueDate ?? default,
+                IsCompleted = IsCompleted
             };
 
             var saved = _taskService.CreateTask(task, _currentAgendaId, _userId);
@@ -111,5 +119,6 @@ public class NewTaskViewModel : ViewModelBase
         Title = "";
         Description = "";
         DueDate = DateTime.Today;
+        IsCompleted = false;
     }
 }

@@ -14,5 +14,8 @@ namespace TimeMirror.Core.Models
         public string Title { get; set; } = "";
         public string Description { get; set; } = "";
         public DateTime DueDate { get; set; }
+
+        // Issue #17 - Vincent: true once the user marks the task as done.
+        public bool IsCompleted { get; set; }
     }
 }

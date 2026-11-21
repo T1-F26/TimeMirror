@@ -11,5 +11,10 @@
         <Button Content="Agenda"
                 Command="{Binding NavigateAgendaCommand}"
                 Margin="10"/>
+
+        <Button Content="Tasks"
+                Command="{Binding NavigateTasksCommand}"
+                Margin="10"/>
+        
     </StackPanel>
 </UserControl>

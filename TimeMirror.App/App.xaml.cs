@@ -56,6 +56,7 @@ public partial class App : Application
         services.AddSingleton<ShellViewModel>();
         services.AddTransient<AgendaViewModel>();
         services.AddTransient<TaskViewModel>();
+        services.AddTransient<AllTasksViewModel>();
 
         services.AddTransient<NewTaskViewModel>(provider =>
         {
