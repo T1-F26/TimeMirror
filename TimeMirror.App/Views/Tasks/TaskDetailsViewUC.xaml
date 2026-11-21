@@ -3,9 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:tasks="clr-namespace:TimeMirror.App.Views.Tasks">
 
-    <!-- View Task (#68) - Vincent
-         Shows a saved task in the reusable TaskCardUC (#53), read-only.
-         DataContext is TaskViewModel (#54/#55). -->
+    <!-- View Task (#68) / Edit Task (#45) - Vincent
+         Shows a saved task in the reusable TaskCardUC (#53).
+         DataContext is TaskViewModel (#54, #55, #35).
+         #37: Edit unlocks the card (IsViewMode = false); Save / Cancel lock it again.
+         #42: while editing, Back is hidden so the user can't leave with unsaved
+              changes. Save or Cancel returns the page to view mode first. -->
+
+    <UserControl.Resources>
+        <!-- Built-in WPF converter: true -> Visible, false -> Collapsed -->
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
+
     <StackPanel MaxWidth="500" HorizontalAlignment="Left">
 
         <TextBlock Text="Task Details"
@@ -14,15 +23,44 @@
 
         <tasks:TaskCardUC/>
 
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+
+            <!-- View mode buttons -->
+            <Button Content="Edit"
+                    Command="{Binding EditCommand}"
+                    Visibility="{Binding IsViewMode, Converter={StaticResource BoolToVisibility}}"
+                    Width="100"
+                    Padding="4"
+                    Margin="0,0,10,0"/>
+
+            <Button Content="Back to Agenda"
+                    Command="{Binding BackCommand}"
+                    Visibility="{Binding IsViewMode, Converter={StaticResource BoolToVisibility}}"
+                    Width="140"
+                    Padding="4"/>
+
+            <!-- Edit mode buttons -->
+            <Button Content="Save"
+                    Command="{Binding SaveCommand}"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}}"
+                    Width="100"
+                    Padding="4"
+                    Margin="0,0,10,0"/>
+
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVisibility}}"
+                    Width="100"
+                    Padding="4"/>
+        </StackPanel>
+
         <TextBlock Text="{Binding ErrorMessage}"
                    Foreground="#C0392B"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,12"/>
+                   TextWrapping="Wrap"/>
 
-        <Button Content="Back to Agenda"
-                Command="{Binding BackCommand}"
-                Width="140"
-                Padding="4"
-                HorizontalAlignment="Left"/>
+        <TextBlock Text="{Binding SuccessMessage}"
+                   Foreground="#2E7D32"
+                   TextWrapping="Wrap"
+                   Margin="0,4,0,0"/>
     </StackPanel>
 </UserControl>
