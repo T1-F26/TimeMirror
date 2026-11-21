@@ -11,6 +11,8 @@ public class ShellViewModel : ViewModelBase
         _navigation.CurrentViewModel;
 
     public ICommand NavigateAgendaCommand { get; }
+    // Issue #13 - Vincent: sidebar button for the Tasks page (#17).
+    public ICommand NavigateTasksCommand { get; }
 
     public ShellViewModel(INavigationService navigation)
     {
@@ -19,6 +21,9 @@ public class ShellViewModel : ViewModelBase
 
         NavigateAgendaCommand = new RelayCommand(
             () => _navigation.NavigateTo<AgendaViewModel>());
+
+        NavigateTasksCommand = new RelayCommand(
+            () => _navigation.NavigateTo<AllTasksViewModel>());
 
         _navigation.PropertyChanged += (_, _) =>
             OnPropertyChanged(nameof(CurrentViewModel));

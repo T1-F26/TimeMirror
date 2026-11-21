@@ -2,11 +2,12 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Issue #53 
-         Reusable task card: Title, Description, Due date.
+    <!-- Issue #53
+         Reusable task card: Title, Description, Due date, Completed.
          Used by New Task (#50), View Task (#68) and Edit Task (#45).
          Binds to the parent ViewModel (DataContext is inherited).
-         When the ViewModel's IsViewMode is true, the fields are read-only (#54). -->
+         When the ViewModel's IsViewMode is true, the fields are read-only (#54).
+         #17: Completed checkbox (TaskItem.IsCompleted). -->
 
     <UserControl.Resources>
 
@@ -23,6 +24,14 @@
 
         <Style TargetType="DatePicker">
             <Setter Property="Margin" Value="0,4,0,16"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsViewMode}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="CheckBox">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsViewMode}" Value="True">
                     <Setter Property="IsEnabled" Value="False"/>
@@ -48,6 +57,10 @@
         <DatePicker SelectedDate="{Binding DueDate}"
                     Width="200"
                     HorizontalAlignment="Left"/>
+
+        <CheckBox Content="Completed"
+                  IsChecked="{Binding IsCompleted}"
+                  Margin="0,0,0,16"/>
 
     </StackPanel>
 </UserControl>

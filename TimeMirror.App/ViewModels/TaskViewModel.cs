@@ -24,6 +24,8 @@ public class TaskViewModel : ViewModelBase
     private string _title = "";
     private string _description = "";
     private DateTime? _dueDate;
+
+    private bool _isCompleted;
     private bool _isViewMode = true;
     private string _errorMessage = "";
     private string _successMessage = "";
@@ -72,6 +74,13 @@ public class TaskViewModel : ViewModelBase
     {
         get => _dueDate;
         set { _dueDate = value; OnPropertyChanged(); }
+    }
+
+    // Issue #17 - shown as the 'Completed' checkbox on the TaskCard.
+    public bool IsCompleted
+    {
+        get => _isCompleted;
+        set { _isCompleted = value; OnPropertyChanged(); }
     }
 
     // TaskCardUC makes its fields read-only/disabled when this is true.
@@ -151,7 +160,8 @@ public class TaskViewModel : ViewModelBase
             AgendaID = task.AgendaID,
             Title = task.Title,
             Description = task.Description,
-            DueDate = task.DueDate
+            DueDate = task.DueDate,
+            IsCompleted = task.IsCompleted
         };
 
         _agendaId = task.AgendaID;
@@ -160,6 +170,7 @@ public class TaskViewModel : ViewModelBase
         Title = task.Title;
         Description = task.Description;
         DueDate = task.DueDate;
+        IsCompleted = task.IsCompleted;
         IsViewMode = true;
     }
 
@@ -217,7 +228,8 @@ public class TaskViewModel : ViewModelBase
                 AgendaID = _agendaId,
                 Title = Title,
                 Description = Description,
-                DueDate = dueDate
+                DueDate = dueDate,
+                IsCompleted = IsCompleted
             };
 
             await _taskService.UpdateTaskAsync(edited);
