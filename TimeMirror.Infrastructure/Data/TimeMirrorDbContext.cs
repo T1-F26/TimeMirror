@@ -15,6 +15,7 @@ public class TimeMirrorDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Agenda> Agendas => Set<Agenda>();
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
+    public DbSet<ActivityRecord> ActivityRecords => Set<ActivityRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,6 +48,17 @@ public class TimeMirrorDbContext : DbContext
         modelBuilder.Entity<TaskItem>(entity =>
         {
             entity.HasKey(t => t.TaskID);
+        });
+
+        // ACTIVITY RECORD: Primary key and relationship
+        modelBuilder.Entity<ActivityRecord>(entity =>
+        {
+            entity.HasKey(a => a.ActivityID);
+
+            entity.HasOne<User>()
+                  .WithMany()
+                  .HasForeignKey(a => a.UserID)
+                  .IsRequired();
         });
     }
 }

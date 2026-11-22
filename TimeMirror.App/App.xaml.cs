@@ -41,6 +41,7 @@ public partial class App : Application
         // Repositories
         services.AddSingleton<IAgendaRepository, AgendaRepository>();
         services.AddSingleton<ITaskRepository, TaskRepository>();
+        services.AddSingleton<IActivityTrackingRepository, ActivityTrackingRepository>();
 
         // Current user
         services.AddSingleton<UserSession>();
@@ -107,7 +108,7 @@ public partial class App : Application
 
             session.CurrentUserId = user.UserID;
         }
-
+  
         var window =
             _provider.GetRequiredService<MainWindow>();
 
