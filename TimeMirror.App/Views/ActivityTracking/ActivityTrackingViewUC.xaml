@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="TimeMirror.App.Views.ActivityTracking.ActivityTrackingViewUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:activity="clr-namespace:TimeMirror.App.Views.ActivityTracking"
+             Background="#F7F8FA">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Activity Tracking"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="#202938"/>
+
+            <TextBlock Text="Monitor your active Windows applications and review recorded usage."
+                       FontSize="13"
+                       Foreground="#64748B"
+                       Margin="0,6,0,0"/>
+        </StackPanel>
+
+        <!-- Controls -->
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="10"
+                Padding="16"
+                Margin="0,0,0,16">
+
+            <DockPanel LastChildFill="False">
+
+                <StackPanel DockPanel.Dock="Left">
+                    <TextBlock Text="{Binding TrackingStatus}"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+
+                    <TextBlock Text="Tracking is controlled manually."
+                               FontSize="12"
+                               Foreground="#64748B"
+                               Margin="0,4,0,0"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal">
+
+                    <Button Content="Start Tracking"
+                            Command="{Binding StartCommand}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"/>
+
+                    <Button Content="Stop Tracking"
+                            Command="{Binding StopCommand}"
+                            Padding="14,8"
+                            Margin="0,0,8,0"/>
+
+                    <Button Content="Refresh"
+                            Command="{Binding RefreshCommand}"
+                            Padding="14,8"/>
+                </StackPanel>
+
+            </DockPanel>
+        </Border>
+
+        <!-- Summary -->
+        <UniformGrid Grid.Row="2"
+                     Columns="2"
+                     Margin="0,0,0,16">
+
+            <Border Background="White"
+                    CornerRadius="10"
+                    Padding="16"
+                    Margin="0,0,8,0">
+
+                <StackPanel>
+                    <TextBlock Text="Recorded Sessions"
+                               Foreground="#64748B"/>
+
+                    <TextBlock Text="{Binding SessionCount}"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="White"
+                    CornerRadius="10"
+                    Padding="16"
+                    Margin="8,0,0,0">
+
+                <StackPanel>
+                    <TextBlock Text="Total Recorded Time"
+                               Foreground="#64748B"/>
+
+                    <TextBlock Text="{Binding TotalRecordedTime}"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Margin="0,6,0,0"/>
+                </StackPanel>
+            </Border>
+
+        </UniformGrid>
+
+        <!-- Activity History -->
+        <Border Grid.Row="3"
+                Background="White"
+                CornerRadius="10"
+                Padding="16">
+
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top"
+                           Text="Application Activity History"
+                           FontSize="18"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,12"/>
+
+                <TextBlock DockPanel.Dock="Bottom"
+                           Text="{Binding ErrorMessage}"
+                           Foreground="#DC2626"
+                           TextWrapping="Wrap"
+                           Margin="0,10,0,0"/>
+
+                <DataGrid ItemsSource="{Binding Activities}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal"
+                          RowHeight="36">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Application"
+                                            Binding="{Binding ApplicationName}"
+                                            Width="*"/>
+
+                        <DataGridTextColumn Header="Start Time"
+                                            Binding="{Binding StartTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                            Width="170"/>
+
+                        <DataGridTextColumn Header="End Time"
+                                            Binding="{Binding EndTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                            Width="170"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>
