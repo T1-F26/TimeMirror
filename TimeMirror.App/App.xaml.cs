@@ -49,7 +49,8 @@ public partial class App : Application
         // Business services
         services.AddSingleton<IAgendaService, AgendaService>();
         services.AddSingleton<ITaskService, TaskService>();
-
+        services.AddSingleton<IActivityTrackingService, ActivityTrackingService>();
+        services.AddSingleton<IActivityTrackingService, ActivityTrackingService>();
         // Navigation
         services.AddSingleton<INavigationService, NavigationService>();
 
@@ -58,6 +59,7 @@ public partial class App : Application
         services.AddTransient<AgendaViewModel>();
         services.AddTransient<TaskViewModel>();
         services.AddTransient<AllTasksViewModel>();
+        services.AddTransient<ActivityTrackingViewModel>();
 
         services.AddTransient<NewTaskViewModel>(provider =>
         {
@@ -121,9 +123,20 @@ public partial class App : Application
         window.Show();
     }
 
-    protected override void OnExit(ExitEventArgs e)
+
+    protected override async void OnExit(ExitEventArgs e)
     {
-        _provider?.Dispose();
-        base.OnExit(e);
+        try
+        {
+            if (_provider != null)
+            {
+                await _provider.DisposeAsync();
+            }
+        }
+        finally
+        {
+            base.OnExit(e);
+        }
     }
+
 }

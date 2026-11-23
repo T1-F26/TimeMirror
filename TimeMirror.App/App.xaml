@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:TimeMirror.App.ViewModels"
              xmlns:agenda="clr-namespace:TimeMirror.App.Views.Agenda"
-             xmlns:tasks="clr-namespace:TimeMirror.App.Views.Tasks">
+             xmlns:tasks="clr-namespace:TimeMirror.App.Views.Tasks"
+             xmlns:activity="clr-namespace:TimeMirror.App.Views.ActivityTracking">
 
     <Application.Resources>
 
@@ -21,6 +22,11 @@
 
         <DataTemplate DataType="{x:Type vm:AllTasksViewModel}">
             <tasks:AllTasksViewUC/>
+        </DataTemplate>
+
+        <!-- Activity Tracking -->
+        <DataTemplate DataType="{x:Type vm:ActivityTrackingViewModel}">
+            <activity:ActivityTrackingViewUC/>
         </DataTemplate>
 
     </Application.Resources>
