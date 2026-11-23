@@ -22,6 +22,34 @@ namespace TimeMirror.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TimeMirror.Core.Models.ActivityRecord", b =>
+                {
+                    b.Property<int>("ActivityID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActivityID"));
+
+                    b.Property<string>("ApplicationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ActivityID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("ActivityRecords");
+                });
+
             modelBuilder.Entity("TimeMirror.Core.Models.Agenda", b =>
                 {
                     b.Property<int>("AgendaID")
@@ -99,6 +127,15 @@ namespace TimeMirror.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TimeMirror.Core.Models.ActivityRecord", b =>
+                {
+                    b.HasOne("TimeMirror.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TimeMirror.Core.Models.Agenda", b =>
