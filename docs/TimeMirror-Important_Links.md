@@ -12,3 +12,7 @@ Central reference hub for TimeMirror's project documentation, diagrams, and deve
 
 ### Class Diagrams
 - [View Architecture & Domain Class Diagrams — Lucidchart](https://lucid.app/lucidchart/b9b25a72-1a8f-47ef-ad7a-4e06cc6f60c0/edit?viewport_loc=-2248%2C-1281%2C8385%2C4581%2C0_0&invitationId=inv_41a79c0e-96db-4349-9370-89e541a67bdc)
+
+
+### Sequence Diagram  -  ViewDashboard
+- [ViewDashboard  Sequence Diagram -- LU]  ()https://lucid.app/lucidchart/353e3a43-2cca-4984-9097-f10c30224954/edit?viewport_loc=-1852%2C-1638%2C4718%2C3002%2C0_0&invitationId=inv_b23e7e07-15c8-4788-b4f5-260772bd973e
