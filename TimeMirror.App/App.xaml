@@ -4,7 +4,9 @@
              xmlns:vm="clr-namespace:TimeMirror.App.ViewModels"
              xmlns:agenda="clr-namespace:TimeMirror.App.Views.Agenda"
              xmlns:tasks="clr-namespace:TimeMirror.App.Views.Tasks"
-             xmlns:activity="clr-namespace:TimeMirror.App.Views.ActivityTracking">
+             xmlns:activity="clr-namespace:TimeMirror.App.Views.ActivityTracking"
+             xmlns:dashboard="clr-namespace:TimeMirror.App.Views.Dashboard"
+             >
 
     <Application.Resources>
 
@@ -24,6 +26,9 @@
             <tasks:AllTasksViewUC/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <dashboard:DashboardViewUC/>
+        </DataTemplate>
         <!-- Activity Tracking -->
         <DataTemplate DataType="{x:Type vm:ActivityTrackingViewModel}">
             <activity:ActivityTrackingViewUC/>

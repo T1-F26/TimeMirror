@@ -15,6 +15,7 @@ public class ShellViewModel : ViewModelBase
     // Issue #13 - Vincent: sidebar button for the Tasks page (#17).
     public ICommand NavigateTasksCommand { get; }
     public ICommand ShowActivityTrackingCommand { get; }
+    public ICommand ShowDashboardCommand { get; }
 
     public ShellViewModel(INavigationService navigation)
     {
@@ -32,5 +33,8 @@ public class ShellViewModel : ViewModelBase
 
         ShowActivityTrackingCommand = new RelayCommand(
     () => _navigation.NavigateTo<ActivityTrackingViewModel>());
+
+        ShowDashboardCommand = new RelayCommand(
+            () => _navigation.NavigateTo<DashboardViewModel>());
     }
 }

@@ -18,6 +18,9 @@
         <Button Content="Activity Tracking"
                 Command="{Binding ShowActivityTrackingCommand}"
                 Margin="10"/>
-        
+        <Button Content="Dashboard"
+                Command="{Binding ShowDashboardCommand}"
+                Margin="10"/>
+
     </StackPanel>
 </UserControl>

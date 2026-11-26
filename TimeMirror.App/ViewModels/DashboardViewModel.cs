@@ -6,6 +6,8 @@ using TimeMirror.App.Commands;
 using TimeMirror.App.Services;
 using TimeMirror.Core.Interfaces.Services;
 using TimeMirror.Core.Models;
+using System.Linq;
+
 
 namespace TimeMirror.App.ViewModels;
 
@@ -21,6 +23,25 @@ public class DashboardViewModel : ViewModelBase
     private TimeSpan _totalTrackedTime;
     private bool _isBusy;
     private string _errorMessage = "";
+
+    private static TimeSpan GetDurationToday(
+    ActivityRecord activity,
+    DateTime today,
+    DateTime now)
+    {
+        var start = activity.StartTime < today
+            ? today
+            : activity.StartTime;
+
+        var end = activity.EndTime ?? now;
+
+        if (end > now)
+            end = now;
+
+        return end > start
+            ? end - start
+            : TimeSpan.Zero;
+    }
 
     public ObservableCollection<TaskItem> TodaysTasks { get; } = new();
 
@@ -173,6 +194,7 @@ public class DashboardViewModel : ViewModelBase
     }
 
     // Load dashboard information for the current user.
+
     public async Task LoadAsync()
     {
         if (IsBusy)
@@ -188,45 +210,67 @@ public class DashboardViewModel : ViewModelBase
             var summary = await _dashboardService
                 .GetDashboardAsync(userId);
 
+            var now = DateTime.Now;
+            var today = now.Date;
+
+            // Today's tasks
             TodaysTasks.Clear();
 
-            foreach (var task in summary.TodaysTasks)
+            foreach (var task in summary.UpcomingTasks
+                .Where(t => t.DueDate.Date == today))
             {
                 TodaysTasks.Add(task);
             }
 
+            // Upcoming tasks
             UpcomingTasks.Clear();
 
-            foreach (var task in summary.UpcomingTasks)
+            foreach (var task in summary.UpcomingTasks
+                .Where(t => t.DueDate.Date > today))
             {
                 UpcomingTasks.Add(task);
             }
 
+            // Daily task statistics
+            CompletedTaskCount = summary.CompletedTaskCount;
+            PendingTaskCount = summary.PendingTaskCount;
+
+            // Recent activity: display latest 10 records
             RecentActivity.Clear();
 
-            foreach (var activity in summary.RecentActivity)
+            foreach (var activity in summary.RecentActivity
+                .OrderByDescending(a => a.StartTime)
+                .Take(10))
             {
                 RecentActivity.Add(activity);
             }
 
-            CompletedTaskCount = summary.CompletedTaskCount;
-            PendingTaskCount = summary.PendingTaskCount;
+            // Total tracked time today
+            TotalTrackedTime = TimeSpan.FromTicks(
+                summary.RecentActivity.Sum(a =>
+                    GetDurationToday(a, today, now).Ticks));
 
+            // Most used application today
             MostUsedApplication =
-                string.IsNullOrWhiteSpace(summary.MostUsedApplication)
-                    ? "No activity recorded"
-                    : summary.MostUsedApplication;
+                summary.FrequentVisit?.ApplicationName
+                ?? "No activity recorded";
 
             MostUsedApplicationDuration =
-                summary.MostUsedApplicationDuration;
-
-            TotalTrackedTime = summary.TotalTrackedTime;
+                summary.FrequentVisit == null
+                    ? TimeSpan.Zero
+                    : TimeSpan.FromTicks(
+                        summary.RecentActivity
+                            .Where(a => a.ApplicationName ==
+                                summary.FrequentVisit.ApplicationName)
+                            .Sum(a => GetDurationToday(
+                                a, today, now).Ticks));
 
             OnPropertyChanged(nameof(CurrentDate));
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Could not load dashboard: {ex.Message}";
+            ErrorMessage =
+                $"Could not load dashboard: {ex.Message}";
         }
         finally
         {

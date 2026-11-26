@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,56 +27,93 @@ namespace TimeMirror.App.Services
 
         public async Task<DashboardSummary> GetDashboardAsync(int userId)
         {
-            // Make sure the user ID is valid
             if (userId <= 0)
-            {
                 throw new ArgumentOutOfRangeException(nameof(userId));
-            }
 
-            // Get the agenda belonging to the user
+            var now = DateTime.Now;
+            var today = now.Date;
+            var tomorrow = today.AddDays(1);
+
+            // Retrieve the user's agenda and tasks.
             var agenda = _agendaService.GetAgenda(userId);
 
             var tasks = new List<TaskItem>();
 
-            // Get the tasks if the user has an agenda
             if (agenda != null)
             {
                 tasks = await _taskService
                     .GetTasksByAgendaIdAsync(agenda.AgendaID);
             }
 
-            // Get the user's recorded activities
+            // Include all tasks scheduled for today,
+            // including completed tasks.
+            var todaysTasks = tasks
+                .Where(t => t.DueDate.Date == today)
+                .ToList();
+
+            // Include today's tasks and pending future tasks.
+            var scheduledTasks = tasks
+                .Where(t =>
+                    t.DueDate.Date == today ||
+                    (t.DueDate.Date > today && !t.IsCompleted))
+                .OrderBy(t => t.DueDate)
+                .ToList();
+
+            // Retrieve activity records.
             var activities = await _activityTrackingService
                 .GetActivitiesAsync(userId);
 
-            var now = DateTime.Now;
+            // Include activities overlapping today's date.
+            var todaysActivities = activities
+                .Where(a =>
+                    a.StartTime < tomorrow &&
+                    (a.EndTime ?? now) > today)
+                .OrderByDescending(a => a.StartTime)
+                .ToList();
 
-            // Organize the retrieved data for the dashboard
+            // Determine most used application by duration.
+            var mostUsedApplication = todaysActivities
+                .GroupBy(a => a.ApplicationName)
+                .OrderByDescending(g => g.Sum(a =>
+                    GetDurationToday(a, today, now).Ticks))
+                .Select(g => g
+                    .OrderByDescending(a => a.StartTime)
+                    .First())
+                .FirstOrDefault();
+
             return new DashboardSummary
             {
-                UpcomingTasks = tasks
-                    .Where(t => !t.IsCompleted && t.DueDate >= now)
-                    .OrderBy(t => t.DueDate)
-                    .ToList(),
+                UpcomingTasks = scheduledTasks,
 
-                CompletedTaskCount = tasks
+                CompletedTaskCount = todaysTasks
                     .Count(t => t.IsCompleted),
 
-                PendingTaskCount = tasks
+                PendingTaskCount = todaysTasks
                     .Count(t => !t.IsCompleted),
 
-                RecentActivity = activities
-                    .OrderByDescending(a => a.StartTime)
-                    .ToList(),
+                RecentActivity = todaysActivities,
 
-                FrequentVisit = activities
-                    .GroupBy(a => a.ApplicationName)
-                    .OrderByDescending(g => g.Count())
-                    .Select(g => g
-                        .OrderByDescending(a => a.StartTime)
-                        .First())
-                    .FirstOrDefault()
+                FrequentVisit = mostUsedApplication
             };
+        }
+
+        private static TimeSpan GetDurationToday(
+            ActivityRecord activity,
+            DateTime today,
+            DateTime now)
+        {
+            var start = activity.StartTime < today
+                ? today
+                : activity.StartTime;
+
+            var end = activity.EndTime ?? now;
+
+            if (end > now)
+                end = now;
+
+            return end > start
+                ? end - start
+                : TimeSpan.Zero;
         }
     }
 }
