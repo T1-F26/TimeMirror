@@ -16,6 +16,7 @@ public class TimeMirrorDbContext : DbContext
     public DbSet<Agenda> Agendas => Set<Agenda>();
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
     public DbSet<ActivityRecord> ActivityRecords => Set<ActivityRecord>();
+    public DbSet<UserPermission> UserPermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,5 +61,33 @@ public class TimeMirrorDbContext : DbContext
                   .HasForeignKey(a => a.UserID)
                   .IsRequired();
         });
+
+
+        // USER PERMISSION: Primary key and relationship
+        modelBuilder.Entity<UserPermission>(entity =>
+        {
+            entity.HasKey(p => p.PermissionID);
+
+            entity.Property(p => p.PermissionType)
+                .HasConversion<string>()
+                .HasMaxLength(50)
+                .IsRequired();
+
+            entity.Property(p => p.IsGranted)
+                .HasDefaultValue(false);
+
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(p => p.UserID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(p => new
+            {
+                p.UserID,
+                p.PermissionType
+            })
+            .IsUnique();
+        });
+
     }
 }
