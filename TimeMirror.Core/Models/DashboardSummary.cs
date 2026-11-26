@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace TimeMirror.Core.Models;
-
-public class DashboardSummary
+namespace TimeMirror.Core.Models
 {
-    public List<TaskItem> TodaysTasks { get; set; } = new();
+    public class DashboardSummary
+    {
+        // Tasks that are coming up
+        public List<TaskItem> UpcomingTasks { get; set; } = new();
 
-    public List<TaskItem> UpcomingTasks { get; set; } = new();
+        // Number of completed tasks
+        public int CompletedTaskCount { get; set; }
 
-    public int CompletedTaskCount { get; set; }
+        // Number of tasks that have not been completed
+        public int PendingTaskCount { get; set; }
 
-    public int PendingTaskCount { get; set; }
+        // Recently recorded activities
+        public List<ActivityRecord> RecentActivity { get; set; } = new();
 
-    public List<ActivityRecord> RecentActivity { get; set; } = new();
-
-    public string MostUsedApplication { get; set; } = "";
-
-    public TimeSpan MostUsedApplicationDuration { get; set; }
-
-    public TimeSpan TotalTrackedTime { get; set; }
+        // Most frequently visited application
+        public ActivityRecord? FrequentVisit { get; set; }
+    }
 }
