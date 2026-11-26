@@ -50,7 +50,7 @@ public partial class App : Application
         services.AddSingleton<IAgendaService, AgendaService>();
         services.AddSingleton<ITaskService, TaskService>();
         services.AddSingleton<IActivityTrackingService, ActivityTrackingService>();
-        services.AddSingleton<IActivityTrackingService, ActivityTrackingService>();
+        services.AddSingleton<IDashboardService, DashboardService>();
         // Navigation
         services.AddSingleton<INavigationService, NavigationService>();
 
@@ -60,7 +60,7 @@ public partial class App : Application
         services.AddTransient<TaskViewModel>();
         services.AddTransient<AllTasksViewModel>();
         services.AddTransient<ActivityTrackingViewModel>();
-
+        services.AddTransient<DashboardViewModel>();
         services.AddTransient<NewTaskViewModel>(provider =>
         {
             var taskService =

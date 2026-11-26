@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TimeMirror.App.ViewModels;
 
-namespace TimeMirror.App.Views.Dashboard
+namespace TimeMirror.App.Views.Dashboard;
+
+public partial class DashboardViewUC : UserControl
 {
-    /// <summary>
-    /// Interaction logic for DashboardViewUC.xaml
-    /// </summary>
-    public partial class DashboardViewUC : UserControl
+    public DashboardViewUC()
     {
-        public DashboardViewUC()
+        InitializeComponent();
+    }
+
+    private async void UserControl_Loaded(
+        object sender, RoutedEventArgs e)
+    {
+        if (DataContext is DashboardViewModel vm)
         {
-            InitializeComponent();
+            await vm.LoadAsync();
         }
     }
 }
