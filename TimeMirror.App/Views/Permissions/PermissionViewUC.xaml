@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="TimeMirror.App.Views.Permissions.PermissionViewUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- View Permissions (#106) - Vincent
+         DataContext: PermissionsViewModel (#105)
+         Binds to: Permissions, IsBusy, ErrorMessage
+         Shows each permission and whether it is granted,
+         or an empty-state message when there are none. -->
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
+
+    <StackPanel MaxWidth="500" HorizontalAlignment="Left">
+
+        <TextBlock Text="Permissions"
+                   FontSize="26"
+                   Margin="0,0,0,5"/>
+
+        <TextBlock Text="What TimeMirror is allowed to access on this device."
+                   Foreground="Gray"
+                   Margin="0,0,0,15"/>
+
+        <!-- Loading -->
+        <TextBlock Text="Loading permissions..."
+                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"
+                   Margin="0,0,0,10"/>
+
+        <!-- Permission list -->
+        <ListBox ItemsSource="{Binding Permissions}"
+                 BorderThickness="0">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <TextBlock Text="{Binding PermissionType}"
+                                   FontWeight="SemiBold"
+                                   Width="200"/>
+                        <TextBlock>
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Not granted"/>
+                                    <Setter Property="Foreground" Value="#C0392B"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsGranted}" Value="True">
+                                            <Setter Property="Text" Value="Granted"/>
+                                            <Setter Property="Foreground" Value="#2E7D32"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!-- Empty state (sequence diagram: "Permission records don't exist") -->
+        <TextBlock Text="No permissions found."
+                   Foreground="Gray"
+                   Margin="0,10,0,0">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Permissions.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <!-- Error -->
+        <TextBlock Text="{Binding ErrorMessage}"
+                   Foreground="#C0392B"
+                   TextWrapping="Wrap"
+                   Margin="0,10,0,0"/>
+    </StackPanel>
+</UserControl>
