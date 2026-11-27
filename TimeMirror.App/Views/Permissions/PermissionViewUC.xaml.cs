@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using TimeMirror.App.ViewModels;
 
 namespace TimeMirror.App.Views.Permissions
 {
     /// <summary>
-    /// Interaction logic for PermissionViewUC.xaml
+    /// View Permissions page (#106).
+    /// On load, asks PermissionsViewModel (#105) to load the user's permissions.
     /// </summary>
     public partial class PermissionViewUC : UserControl
     {
         public PermissionViewUC()
         {
             InitializeComponent();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is PermissionsViewModel vm)
+                await vm.LoadAsync();
         }
     }
 }
