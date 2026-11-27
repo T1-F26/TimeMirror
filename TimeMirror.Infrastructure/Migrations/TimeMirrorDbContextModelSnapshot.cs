@@ -129,6 +129,35 @@ namespace TimeMirror.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TimeMirror.Core.Models.UserPermission", b =>
+                {
+                    b.Property<int>("PermissionID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionID"));
+
+                    b.Property<bool>("IsGranted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("PermissionType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("PermissionID");
+
+                    b.HasIndex("UserID", "PermissionType")
+                        .IsUnique();
+
+                    b.ToTable("UserPermissions");
+                });
+
             modelBuilder.Entity("TimeMirror.Core.Models.ActivityRecord", b =>
                 {
                     b.HasOne("TimeMirror.Core.Models.User", null)
@@ -152,6 +181,15 @@ namespace TimeMirror.Infrastructure.Migrations
                     b.HasOne("TimeMirror.Core.Models.Agenda", null)
                         .WithMany("Tasks")
                         .HasForeignKey("AgendaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("TimeMirror.Core.Models.UserPermission", b =>
+                {
+                    b.HasOne("TimeMirror.Core.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

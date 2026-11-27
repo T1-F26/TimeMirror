@@ -1,0 +1,11 @@
+ TimeMirror.Core/Enums/PermissionType.cs            |   6 [32m+[m
+ TimeMirror.Core/Models/UserPermission.cs           |  14 [32m++[m
+ .../Data/TimeMirrorDbContext.cs                    |  29 [32m+++[m
+ .../20261126172451_AddUserPermissions.Designer.cs  | 212 [32m+++++++++++++++++++++[m
+ .../20261126172451_AddUserPermissions.cs           |  40 [32m++++[m
+ .../20261126173250_SeedUserPermissions.Designer.cs | 212 [32m+++++++++++++++++++++[m
+ .../20261126173250_SeedUserPermissions.cs          |  22 [32m+++[m
+ ...61126173750_BackfillUserPermissions.Designer.cs | 212 [32m+++++++++++++++++++++[m
+ .../20261126173750_BackfillUserPermissions.cs      |  38 [32m++++[m
+ .../Migrations/TimeMirrorDbContextModelSnapshot.cs |  38 [32m++++[m
+ 10 files changed, 823 insertions(+)

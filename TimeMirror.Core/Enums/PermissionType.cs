@@ -2,7 +2,5 @@
 
 public enum PermissionType
 {
-    ActivityTracking,
-    Notifications,
-    FileExport
+    ActivityTracking
 }
