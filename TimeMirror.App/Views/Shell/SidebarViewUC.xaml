@@ -21,6 +21,8 @@
         <Button Content="Dashboard"
                 Command="{Binding ShowDashboardCommand}"
                 Margin="10"/>
-
+        <Button Content="Permissions"
+                Command="{Binding ShowPermissionsCommand}"
+                Margin="10"/>   
     </StackPanel>
 </UserControl>

@@ -42,6 +42,7 @@ public partial class App : Application
         services.AddSingleton<IAgendaRepository, AgendaRepository>();
         services.AddSingleton<ITaskRepository, TaskRepository>();
         services.AddSingleton<IActivityTrackingRepository, ActivityTrackingRepository>();
+        services.AddSingleton<IPermissionRepository, PermissionRepository>();
 
         // Current user
         services.AddSingleton<UserSession>();
@@ -51,6 +52,7 @@ public partial class App : Application
         services.AddSingleton<ITaskService, TaskService>();
         services.AddSingleton<IActivityTrackingService, ActivityTrackingService>();
         services.AddSingleton<IDashboardService, DashboardService>();
+        services.AddSingleton<IPermissionService, PermissionService>();
         // Navigation
         services.AddSingleton<INavigationService, NavigationService>();
 
@@ -61,6 +63,7 @@ public partial class App : Application
         services.AddTransient<AllTasksViewModel>();
         services.AddTransient<ActivityTrackingViewModel>();
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<PermissionsViewModel>();
         services.AddTransient<NewTaskViewModel>(provider =>
         {
             var taskService =
