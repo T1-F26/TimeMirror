@@ -1,10 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using TimeMirror.Core.Enums;
+using TimeMirror.Core.Models;
 
-namespace TimeMirror.Core.Interfaces.Repositories
+namespace TimeMirror.Core.Interfaces.Repositories;
+
+public interface IPermissionRepository
 {
-    internal class IPermissionRepository
-    {
-    }
+    Task<List<UserPermission>> GetByUserIdAsync(int userId);
+
+    Task<UserPermission?> GetByTypeAsync(
+        int userId, PermissionType permissionType);
+
+    Task UpdateAsync(UserPermission permission);
 }
