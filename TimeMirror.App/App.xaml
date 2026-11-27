@@ -6,6 +6,7 @@
              xmlns:tasks="clr-namespace:TimeMirror.App.Views.Tasks"
              xmlns:activity="clr-namespace:TimeMirror.App.Views.ActivityTracking"
              xmlns:dashboard="clr-namespace:TimeMirror.App.Views.Dashboard"
+             xmlns:permissions="clr-namespace:TimeMirror.App.Views.Permissions"
              >
 
     <Application.Resources>
@@ -32,6 +33,11 @@
         <!-- Activity Tracking -->
         <DataTemplate DataType="{x:Type vm:ActivityTrackingViewModel}">
             <activity:ActivityTrackingViewUC/>
+        </DataTemplate>
+
+        <!-- Permissions -->
+        <DataTemplate DataType="{x:Type vm:PermissionsViewModel}">
+            <permissions:PermissionViewUC/>
         </DataTemplate>
 
     </Application.Resources>

@@ -16,6 +16,7 @@ public class ShellViewModel : ViewModelBase
     public ICommand NavigateTasksCommand { get; }
     public ICommand ShowActivityTrackingCommand { get; }
     public ICommand ShowDashboardCommand { get; }
+    public ICommand ShowPermissionsCommand { get; }
 
     public ShellViewModel(INavigationService navigation)
     {
@@ -36,5 +37,8 @@ public class ShellViewModel : ViewModelBase
 
         ShowDashboardCommand = new RelayCommand(
             () => _navigation.NavigateTo<DashboardViewModel>());
+
+        ShowPermissionsCommand = new RelayCommand(
+    () => _navigation.NavigateTo<PermissionsViewModel>());
     }
 }
